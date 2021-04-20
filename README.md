@@ -1,6 +1,6 @@
 # BarcodeCache
 
-A local network cache for requests to external resources. Local cache server registration / autodetection is accomplished via [Zeroconf](http://www.zeroconf.org), with the cached data in persistent storage via one of several supported relational databases ([SQLite](https://www.sqlite.org/index.html), [MySQL](https://www.mysql.com), or [Postgres](https://www.postgresql.org)).
+A local network cache for requests to external resources. Local cache server registration / autodetection is accomplished via [Zeroconf](http://www.zeroconf.org), with the cached data in persistent storage via one of several supported relational databases ([SQLite](https://www.sqlite.org/index.html), [MySQL](https://www.mysql.com), or [PostgreSQL](https://www.postgresql.org)).
 
 In this example, the local server caches requests to the [Alma](https://exlibrisgroup.com/products/alma-library-services-platform/) system to translate barcode data into a book's ISBN, author, and title.
 
@@ -8,7 +8,7 @@ Such requests may be limited in number, either as a hard limit or through chargi
 
 The local server advertises itself on the local network via [Zeroconf](http://www.zeroconf.org), and clients send a URL request to the local server. If the local server has cached the request previously, the cached data is returned; otherwise, the "external" server is contacted, and the local server then caches the response before passing the data on to the client.
 
-The cache itself is implemented using persistent storage via a relational database. The local server code provides a simple shim layer for interfacing with a [SQLite](https://www.sqlite.org/index.html), [MySQL](https://www.mysql.com), or [Postgres](https://www.postgresql.org) database; the default mode of operation uses SQLite.
+The cache itself is implemented using persistent storage via a relational database. The local server code provides a simple shim layer for interfacing with a [SQLite](https://www.sqlite.org/index.html), [MySQL](https://www.mysql.com), or [PostgreSQL](https://www.postgresql.org) database; the default mode of operation uses SQLite.
 
 ## Prerequisites
 
