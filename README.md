@@ -18,7 +18,7 @@ The cache itself is implemented using persistent storage via a relational databa
 
 The server component expects incoming requests on the REST-y endpoint `/api/v1/`. At this time, only a simple barcode lookup is supported, e.g. `http://[server hostname]:[port]/api/v1/barcode/[barcode data]`. Data is returned in [JSON](https://www.json.org/json-en.html) format.
 
-For a simple example, using a Macbook Pro running macOS:
+For a simple example:
 
 ```
 $ cd BarcodeCache/Server
@@ -33,9 +33,9 @@ $ go run .
 2021/04/20 17:11:41   Address: :63287
 ```
 
-Here, we run the local server program with no parameters; the local server will default to using a [SQLite](https://www.sqlite.org/index.html) database to cache requested data, and the "remote" server will be represented by an internal `RandomServer`. The `RandomServer` is a test mechanism that simply generates a random number and returns test data with that number appended for testing purposes.
+Here, we run the local server program with no parameters; the local server will default to using a [SQLite](https://www.sqlite.org/index.html) database to cache requested data, and the "remote" server will be represented by an internal `RandomServer`. The `RandomServer` simply generates a random number and returns dummy data with that number appended for testing purposes.
 
-The local server launches, and advertises itself using [Zeroconf](http://www.zeroconf.org) as a service called `BarcodeServer` of type `_http._tcp` in the `local` domain on port `63287` (with the latter a randomly assigned but currently unused port).
+The local server launches, and advertises itself using [Zeroconf](http://www.zeroconf.org) as a service called `BarcodeServer` of type `_http._tcp` in the `local` domain on port `63287` (with the latter a randomly assigned, currently unused port).
 
 The local server can be tested using e.g. [curl](https://curl.se) via the endpoint `/api/v1/`:
 
@@ -53,7 +53,7 @@ $ curl http://localhost:63287/api/v1/barcode/666
 {"barcode":"666","isbn":"ISBN214304","author":"Author214304","title":"Title214304"}
 ```
 
-Here, we see the influence of the `RandomServer` test system; dummy test data is returned, and this data is also cached into the local server's database. Future lookups of the same "barcode" (`666`) should return this same data, as that barcode is now stored in the local cache and the `RandomServer` shouldn't need to be contacted.
+Here, we assume `curl` is run on the same machine as the server, hence the use of `localhost` as the server host name. The response shows the influence of the `RandomServer` test system; dummy test data featuring a random number is generated, cached, and returned. Future lookups of the same "barcode" (`666`) should return this same data, as data for the barcode `666` is now present in the local cache and a call to the "external" `RandomServer` should not occur.
 
 More complicated uses of the local server are possible:
 
@@ -69,7 +69,7 @@ Usage of /var/folders/9l/spnj9hpx0119g95h3bx0f14w0000gn/T/go-build1520152934/b00
   -db_port string
     	Database port.
   -db_type string
-    	Database type, sqlite|mysql|postgres (default: sqlite). (default "sqlite")
+    	Database type, sqlite|mysql|postgres. (default "sqlite")
   -db_user string
     	Database user name.
   -domain string
@@ -88,7 +88,7 @@ Usage of /var/folders/9l/spnj9hpx0119g95h3bx0f14w0000gn/T/go-build1520152934/b00
 
 Here, we see that parameters controlling the database can be provided, along with controls for the [Zeroconf](http://www.zeroconf.org) registration.
 
-Also present is a `key` option; this specified an [Alma](https://exlibrisgroup.com/products/alma-library-services-platform/) access key. If provided, the local server will call out to the Alma server where a request is unable to be serviced by the local cache. The resultant data is cached, and returned to the user.
+Also present is a `key` option; this specified an [Alma](https://exlibrisgroup.com/products/alma-library-services-platform/) access key. If provided, the local server will call out to the external Alma server where a request is unable to be serviced by the local cache. The resultant data is then stored in the cache, and returned to the user.
 
 ## Example client component
 
@@ -109,13 +109,13 @@ Usage of /var/folders/9l/spnj9hpx0119g95h3bx0f14w0000gn/T/go-build1449433265/b00
     	Duration in [s] to run discovery. (default 10)
 ```
 
-The client can be passed a barcode parameter to request from the local server:
+The client can be passed a barcode parameter to query:
 
-'''
+```
 $ go run . -barcode 666
 Service located at:  http://10.204.61.255:63774/api/v1/barcode/666
 Response status: 200 OK
 {"barcode":"666","isbn":"ISBN214304","author":"Author214304","title":"Title214304"}
-'''
+```
 
 By default, the client waits 10 seconds to detect the presence of a suitable local server before exit; this can be changed via the `-wait` parameter. The specifics of this detection can be controlled via the `-domain`, `-name`, and `-service` parameters.

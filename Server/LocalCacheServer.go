@@ -104,7 +104,7 @@ var (
 	port_     = flag.Int("port", 0, "Set the port the service is listening to (0 = use any free port).")
 	timeout_  = flag.Int("wait", 0, "Timeout in seconds after which server is closed (0 = no timeout).")
 
-	dbType_ = flag.String("db_type", "sqlite", "Database type, sqlite|mysql|postgres (default: sqlite).")
+	dbType_ = flag.String("db_type", "sqlite", "Database type, sqlite|mysql|postgres.")
 	dbName_ = flag.String("db_name", "", "Database name.")
 	dbUser_ = flag.String("db_user", "", "Database user name.")
 	dbPass_ = flag.String("db_pass", "", "Database user password.")
